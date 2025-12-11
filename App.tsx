@@ -14,8 +14,8 @@ function App() {
       <Hero />
       <Services />
       <Process />
-      <AiConsultant />
       <Pricing />
+      <AiConsultant />
       <Footer />
     </main>
   );

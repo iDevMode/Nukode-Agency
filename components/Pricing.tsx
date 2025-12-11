@@ -48,7 +48,7 @@ export const Pricing: React.FC = () => {
 
   return (
     <section id="pricing" className="py-24 bg-nukode-black">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="text-center mb-16">
           <span className="text-sm font-semibold tracking-widest text-nukode-muted uppercase mb-4 block">Pricing Plan</span>
           <h2 className="text-4xl md:text-5xl font-serif text-white mb-4">
@@ -59,7 +59,7 @@ export const Pricing: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-8 xl:gap-12">
           {plans.map((plan, index) => (
             <div 
               key={index} 

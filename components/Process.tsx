@@ -21,7 +21,7 @@ export const Process: React.FC = () => {
 
   return (
     <section id="process" className="py-24 bg-nukode-dark border-y border-white/5">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="text-center mb-20">
           <span className="text-sm font-semibold tracking-widest text-white uppercase mb-4 block">How It Works</span>
           <h2 className="text-4xl md:text-5xl font-serif text-white">
@@ -30,7 +30,7 @@ export const Process: React.FC = () => {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 xl:gap-12">
           {steps.map((step, index) => (
             <div 
               key={index} 

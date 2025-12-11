@@ -8,24 +8,24 @@ export const Hero: React.FC = () => {
       {/* Abstract Background Effect */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white opacity-[0.03] blur-[120px] rounded-full pointer-events-none"></div>
       
-      <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
+      <div className="max-w-screen-2xl w-full mx-auto px-6 md:px-12 relative z-10 flex flex-col items-center text-center">
         
-        <div className="max-w-4xl flex flex-col items-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
+        <div className="max-w-5xl mx-auto flex flex-col items-center space-y-10">
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-xs font-medium tracking-wide text-nukode-muted uppercase">Accepting New Clients</span>
+            <span className="text-xs font-semibold tracking-widest text-nukode-muted uppercase">Accepting New Clients</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-serif text-white leading-[1.1]">
+          <h1 className="text-6xl md:text-8xl font-serif text-white leading-[1.1] tracking-tighter">
             Build Systems, <br />
-            <span className="italic text-nukode-muted">Not Hype.</span>
+            <span className="italic text-nukode-muted border border-[#3b82f6] px-6 py-1 mt-4 inline-block">Not Hype.</span>
           </h1>
           
-          <p className="text-lg text-nukode-muted max-w-lg font-light leading-relaxed mx-auto">
-            Nukode builds agentic workflows and chatbots that solve real business problems. We focus on measurable ROI, replacing manual drudgery with intelligent automation.
+          <p className="text-xl text-nukode-muted max-w-2xl font-light leading-relaxed mx-auto mt-6">
+            Nukode builds agentic workflows and chatbots that solve real business problems. We focus on measurable ROI, <span className="text-white font-medium">replacing</span> <span className="line-through decoration-[#3b82f6] decoration-2 text-white/60">manual drudgery</span> with intelligent automation.
           </p>
 
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap gap-5 justify-center mt-4">
             <Button onClick={() => document.getElementById('consultant')?.scrollIntoView({ behavior: 'smooth' })}>
               Calculate Your ROI
             </Button>
@@ -34,13 +34,36 @@ export const Hero: React.FC = () => {
             </Button>
           </div>
 
-          <div className="pt-8 border-t border-white/10 w-full max-w-xl">
-            <p className="text-sm text-nukode-muted mb-4">Trusted by innovative founders</p>
-            <div className="flex gap-8 justify-center opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-               {/* Placeholders for logos */}
-               <div className="font-bold text-lg font-serif">IPSUM</div>
-               <div className="font-bold text-lg font-sans tracking-tighter">LOGIA</div>
-               <div className="font-bold text-lg font-mono">VORTEX</div>
+          <div className="pt-16 border-t border-white/5 w-full max-w-5xl">
+            <p className="text-xs font-semibold text-nukode-muted mb-10 tracking-[0.2em] uppercase opacity-50">Powered by best-in-class technology</p>
+            
+            <div className="flex flex-wrap gap-x-12 gap-y-8 md:gap-x-20 justify-center items-center">
+              
+              {/* OpenAI - Clean Sans */}
+              <div className="group opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                <span className="text-white font-sans text-xl md:text-2xl font-semibold tracking-wide">OpenAI</span>
+              </div>
+
+              {/* Claude - Elegant Serif (Garamond style) */}
+              <div className="group opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                <span className="text-white text-2xl md:text-3xl font-medium tracking-tight" style={{ fontFamily: 'Garamond, Georgia, "Times New Roman", serif' }}>Claude</span>
+              </div>
+
+              {/* n8n - Technical Mono/Sans feel */}
+              <div className="group opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                <span className="text-white font-mono text-2xl md:text-3xl font-bold tracking-tighter">n8n</span>
+              </div>
+
+              {/* IIElevenLabs - Bold, balanced size for length */}
+              <div className="group opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                <span className="text-white font-sans text-xl md:text-2xl font-bold tracking-tight">IIElevenLabs</span>
+              </div>
+
+              {/* GoHighLevel - Bold, balanced size for length */}
+              <div className="group opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                <span className="text-white font-sans text-xl md:text-2xl font-bold tracking-tight">GoHighLevel</span>
+              </div>
+
             </div>
           </div>
         </div>

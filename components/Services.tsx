@@ -27,7 +27,7 @@ export const Services: React.FC = () => {
 
   return (
     <section id="services" className="py-24 bg-nukode-black relative">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="mb-16">
           <h2 className="text-4xl md:text-5xl font-serif text-white mb-6">
             We're a Full-Service <br />
@@ -38,7 +38,7 @@ export const Services: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8">
           {services.map((service, index) => (
             <div 
               key={index} 
