@@ -1,13 +1,17 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ROIAnalysis } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export const analyzeBusinessROI = async (
   businessType: string,
   bottleneck: string
 ): Promise<ROIAnalysis> => {
   try {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey || apiKey === 'your_api_key_here') {
+      throw new Error("Please add your Gemini API key to the .env file");
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
     const prompt = `
       You are a senior AI Automation Consultant for an agency called "Nukode".
       The user runs a business of type: "${businessType}".
