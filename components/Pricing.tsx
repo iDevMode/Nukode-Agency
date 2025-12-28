@@ -7,7 +7,7 @@ export const Pricing: React.FC = () => {
     {
       name: "Starter",
       description: "Perfect for small teams getting started with AI automation.",
-      price: "$1,990",
+      price: "£1,990",
       period: "/setup",
       features: [
         "1 AI Chatbot or Workflow",
@@ -20,7 +20,7 @@ export const Pricing: React.FC = () => {
     {
       name: "Growth",
       description: "Ideal for growing businesses scaling their operations.",
-      price: "$4,990",
+      price: "£4,990",
       period: "/setup",
       popular: true,
       features: [
