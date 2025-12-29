@@ -3,17 +3,17 @@ import React from 'react';
 export const Process: React.FC = () => {
   const steps = [
     {
-      number: "001",
+      number: "01",
       title: "Discovery & Audit",
       description: "We dive deep into your current processes to identify bottlenecks and high-value automation opportunities."
     },
     {
-      number: "002",
+      number: "02",
       title: "Custom Implementation",
       description: "We design, build, and deploy agentic workflows tailored specifically to your business needs and tech stack."
     },
     {
-      number: "003",
+      number: "03",
       title: "Optimization & Support",
       description: "We don't just ship and leave. We monitor performance, iterate on the AI models, and scale as you grow."
     }
