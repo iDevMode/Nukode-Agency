@@ -73,29 +73,41 @@ interface ROIAnalysis {
 // TYPEFORM PARSER
 // ============================================================================
 
+// Actual Typeform field refs (UUIDs from the form)
 const FIELD_MAPPING: Record<string, keyof TypeformAuditResponse> = {
-  'company_name': 'companyName',
-  'industry': 'industry',
-  'company_size': 'companySize',
-  'annual_revenue': 'annualRevenue',
-  'primary_challenge': 'primaryChallenge',
-  'time_consuming_processes': 'timeConsumingProcesses',
-  'hours_per_week_manual': 'hoursPerWeekOnManualTasks',
-  'employees_repetitive_tasks': 'employeesOnRepetitiveTasks',
-  'hourly_cost_employee': 'hourlyCostPerEmployee',
-  'monthly_operating_costs': 'monthlyOperatingCosts',
-  'current_tech_stack': 'currentTechStack',
-  'desired_outcomes': 'desiredOutcomes',
-  'expected_roi_timeline': 'expectedROITimeline',
-  'implementation_budget': 'implementationBudget',
-  'email': 'email',
-  'phone': 'phone',
-  'best_time_contact': 'bestTimeToContact',
+  // Industry
+  '59cce49b-2b92-49d6-9382-b99b2ac7f489': 'industry',
+  // Company size (employees)
+  'a0b06f51-a9af-4435-ba24-586fac9fef0c': 'companySize',
+  // Monthly revenue
+  '364b311c-e0f6-4b2d-8d8e-a84c8a437612': 'annualRevenue',
+  // Time-consuming manual tasks
+  '7ee3b35e-948b-4c15-b47c-e8dd820fd729': 'timeConsumingProcesses',
+  // Hours per week on manual tasks
+  'a4827bca-e62d-48e4-8b3a-074f5468adb9': 'hoursPerWeekOnManualTasks',
+  // Biggest frustration (primary challenge)
+  '2ac4774b-c06a-4851-a4e7-5c007043b565': 'primaryChallenge',
+  // Current tools/systems
+  '7921673a-99df-45b5-9550-4c7cd06bdc2d': 'currentTechStack',
+  // AI experimentation - not mapped
+  // Success criteria (desired outcomes)
+  '7c5d10e5-3493-45da-914a-f14cb909f13f': 'desiredOutcomes',
+  // Name - not in our interface, but we can ignore
+  'ff16e4fa-c41c-4637-98cf-ae43f5904a1d': 'companyName', // Using name as company name fallback
+  // Email
+  '47c330da-bcfb-41f5-b81f-372487b708b2': 'email',
+  // Phone
+  '7d71a621-b2ff-4137-9d45-4b2110c3ad11': 'phone',
+  // Company name
+  '2dc5baff-bcf2-4d22-a43d-2c88ebb5726d': 'companyName',
+  // Timeline
+  'ce2a12a5-78c3-4906-9755-cff0bb9e6338': 'expectedROITimeline',
 };
 
 function extractAnswerValue(answer: TypeformAnswer): string | string[] | number | undefined {
   switch (answer.type) {
     case 'text': return answer.text;
+    case 'long_text': return answer.text; // long_text also uses .text
     case 'email': return answer.email;
     case 'phone_number': return answer.phone_number;
     case 'number': return answer.number;
@@ -132,8 +144,13 @@ function parseTypeformPayload(payload: TypeformWebhookPayload): TypeformAuditRes
 
     const value = extractAnswerValue(answer);
     if (value !== undefined) {
-      if (propertyName === 'hoursPerWeekOnManualTasks' || propertyName === 'employeesOnRepetitiveTasks') {
-        (response as any)[propertyName] = typeof value === 'number' ? value : parseInt(String(value), 10) || 0;
+      if (propertyName === 'hoursPerWeekOnManualTasks') {
+        // Parse hours from choice label like "10-20 hours" or "20+ hours"
+        const strValue = String(value);
+        const match = strValue.match(/(\d+)/);
+        (response as any)[propertyName] = match ? parseInt(match[1], 10) : 10;
+      } else if (propertyName === 'employeesOnRepetitiveTasks') {
+        (response as any)[propertyName] = typeof value === 'number' ? value : parseInt(String(value), 10) || 1;
       } else if (['primaryChallenge', 'timeConsumingProcesses', 'currentTechStack', 'desiredOutcomes'].includes(propertyName)) {
         (response as any)[propertyName] = Array.isArray(value) ? value : [value];
       } else {
@@ -142,8 +159,12 @@ function parseTypeformPayload(payload: TypeformWebhookPayload): TypeformAuditRes
     }
   }
 
+  // More lenient validation - only email is truly required
   if (!response.email) throw new Error('Missing required field: email');
-  if (!response.companyName) throw new Error('Missing required field: companyName');
+  // Default company name if not provided
+  if (!response.companyName) response.companyName = 'Unknown Company';
+  // Default employees if not provided
+  if (!response.employeesOnRepetitiveTasks) response.employeesOnRepetitiveTasks = 1;
 
   return response;
 }
