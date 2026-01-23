@@ -477,15 +477,18 @@ async function sendAdminNotificationEmail(data: {
 </html>`;
 
   try {
-    await mailService.send({
+    console.log(`Sending admin notification to ${adminEmail} from ${fromEmail}`);
+    const result = await mailService.send({
       to: adminEmail,
       from: { email: fromEmail, name: 'Nukode Audit System' },
-      subject: `New Audit Submission: ${data.companyName}`,
+      replyTo: data.email,
+      subject: `🔔 New Audit Lead: ${data.companyName}`,
       html,
     });
+    console.log('Admin notification sent successfully:', result[0]?.statusCode);
     return { success: true };
   } catch (err: any) {
-    console.error('Admin notification error:', err?.response?.body || err.message);
+    console.error('Admin notification error:', JSON.stringify(err?.response?.body || err.message));
     return { success: false, error: err?.message };
   }
 }
