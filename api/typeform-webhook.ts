@@ -406,7 +406,7 @@ async function sendAdminNotificationEmail(data: {
 }): Promise<{ success: boolean; error?: string }> {
   const apiKey = process.env.SENDGRID_API_KEY;
   const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil@nukode.co.uk';
-  const adminEmail = process.env.ADMIN_EMAIL || 'phil@nukode.co.uk';
+  const adminEmail = process.env.ADMIN_EMAIL || 'phil.shields92@gmail.com';
   if (!apiKey) return { success: false, error: 'Missing SENDGRID_API_KEY' };
 
   const mailService = new MailService();
