@@ -31,7 +31,7 @@ export const Pricing: React.FC = () => {
         "Expert guidance from day one"
       ],
       buttonText: "Book a Call",
-      buttonAction: () => window.open('https://form.typeform.com/to/BYcoTN6c', '_blank')
+      buttonAction: () => window.open('https://calendly.com/phil-shields92', '_blank')
     }
   ];
 
