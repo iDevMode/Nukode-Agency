@@ -373,7 +373,7 @@ async function sendROIEmail(data: {
     </div>
     <p>Potential annual savings: <strong>${formatCurrency(data.metrics.potentialSavings30Percent)} - ${formatCurrency(data.metrics.potentialSavings50Percent)}</strong></p>
     <div style="text-align: center; margin-top: 30px;">
-      <a href="https://nukode.co.uk/book-call" class="cta-button">Book Your Free Strategy Call</a>
+      <a href="https://calendly.com/phil-shields92" class="cta-button">Book Your Free Strategy Call</a>
     </div>
   </div>
 </body>
@@ -389,6 +389,103 @@ async function sendROIEmail(data: {
     return { success: true, messageId: response[0]?.headers?.['x-message-id'] || 'sent' };
   } catch (err: any) {
     console.error('SendGrid error:', err?.response?.body || err.message);
+    return { success: false, error: err?.message };
+  }
+}
+
+async function sendAdminNotificationEmail(data: {
+  companyName: string;
+  email: string;
+  phone?: string;
+  industry: string;
+  companySize: string;
+  challenges: string[];
+  processes: string[];
+  analysis: ROIAnalysis;
+  metrics: ROIMetrics;
+}): Promise<{ success: boolean; error?: string }> {
+  const apiKey = process.env.SENDGRID_API_KEY;
+  const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil@nukode.co.uk';
+  const adminEmail = process.env.ADMIN_EMAIL || 'phil@nukode.co.uk';
+  if (!apiKey) return { success: false, error: 'Missing SENDGRID_API_KEY' };
+
+  const mailService = new MailService();
+  mailService.setApiKey(apiKey);
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #1e40af; color: #fff; padding: 20px; border-radius: 8px 8px 0 0; }
+    .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
+    .section { background: #fff; border: 1px solid #e5e5e5; border-radius: 6px; padding: 15px; margin: 15px 0; }
+    .label { color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; }
+    .value { color: #050505; font-size: 16px; font-weight: 500; }
+    .highlight { color: #1e40af; font-weight: bold; }
+    ul { margin: 5px 0; padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2 style="margin: 0;">New Audit Submission</h2>
+    <p style="margin: 5px 0 0 0; opacity: 0.9;">${data.companyName}</p>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="label">Contact Information</div>
+      <div class="value">${data.email}</div>
+      ${data.phone ? `<div class="value">${data.phone}</div>` : ''}
+    </div>
+
+    <div class="section">
+      <div class="label">Company Details</div>
+      <div class="value">Industry: ${data.industry || 'Not specified'}</div>
+      <div class="value">Size: ${data.companySize || 'Not specified'}</div>
+    </div>
+
+    <div class="section">
+      <div class="label">Challenges</div>
+      <ul>${data.challenges.map(c => `<li>${c}</li>`).join('')}</ul>
+    </div>
+
+    <div class="section">
+      <div class="label">Time-Consuming Processes</div>
+      <ul>${data.processes.map(p => `<li>${p}</li>`).join('')}</ul>
+    </div>
+
+    <div class="section">
+      <div class="label">ROI Metrics</div>
+      <div class="value">Weekly Hours: <span class="highlight">${data.metrics.totalWeeklyHours} hrs</span></div>
+      <div class="value">Monthly Cost: <span class="highlight">${formatCurrency(data.metrics.monthlyLaborCost)}</span></div>
+      <div class="value">Potential Savings: <span class="highlight">${formatCurrency(data.metrics.potentialSavings30Percent)} - ${formatCurrency(data.metrics.potentialSavings50Percent)}/year</span></div>
+    </div>
+
+    <div class="section">
+      <div class="label">AI Recommendation</div>
+      <div class="value" style="font-weight: bold; color: #1e40af;">${data.analysis.strategy}</div>
+      <p style="margin: 10px 0;">${data.analysis.implementation}</p>
+      <p style="margin: 0;"><strong>${data.analysis.savings}</strong></p>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="https://calendly.com/phil-shields92" style="display: inline-block; background: #1e40af; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Calendly Bookings</a>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  try {
+    await mailService.send({
+      to: adminEmail,
+      from: { email: fromEmail, name: 'Nukode Audit System' },
+      subject: `New Audit Submission: ${data.companyName}`,
+      html,
+    });
+    return { success: true };
+  } catch (err: any) {
+    console.error('Admin notification error:', err?.response?.body || err.message);
     return { success: false, error: err?.message };
   }
 }
@@ -482,13 +579,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       };
     }
 
-    // Send email
+    // Send client email
     const emailResult = await sendROIEmail({
       companyName: auditResponse.companyName,
       email: auditResponse.email,
       analysis: aiAnalysis,
       metrics: roiMetrics,
     });
+
+    // Send admin notification email
+    const adminEmailResult = await sendAdminNotificationEmail({
+      companyName: auditResponse.companyName,
+      email: auditResponse.email,
+      phone: auditResponse.phone,
+      industry: auditResponse.industry,
+      companySize: auditResponse.companySize,
+      challenges: auditResponse.primaryChallenge,
+      processes: auditResponse.timeConsumingProcesses,
+      analysis: aiAnalysis,
+      metrics: roiMetrics,
+    });
+
+    if (!adminEmailResult.success) {
+      console.warn('Admin notification failed:', adminEmailResult.error);
+    }
 
     await updateSubmission(submissionId, {
       email_sent: emailResult.success,
