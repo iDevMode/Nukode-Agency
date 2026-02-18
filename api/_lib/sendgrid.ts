@@ -66,7 +66,7 @@ export async function sendROIEmail(data: EmailData): Promise<EmailResult> {
       desired_outcomes: data.auditResponse.desiredOutcomes,
 
       // Call to action
-      cta_url: 'https://nukode.co.uk/book-call',
+      cta_url: 'https://calendly.com/phil-shields92',
     };
 
     // If template ID is set, use dynamic template

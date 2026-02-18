@@ -32,6 +32,7 @@ async function check() {
       console.log('Industry:', row.industry);
       console.log('Created:', row.created_at);
       console.log('Status:', row.processing_status);
+      console.log('Email Sent:', row.email_sent);
       console.log('AI Strategy:', row.ai_strategy || 'N/A');
     });
   } else {
