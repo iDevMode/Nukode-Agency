@@ -2,9 +2,9 @@
 // Sends personalized ROI analysis emails using dynamic templates
 
 import { MailService } from '@sendgrid/mail';
-import { TypeformAuditResponse } from './typeform-parser';
-import { ROIMetrics, formatCurrency } from './roi-calculator';
-import { ROIAnalysis } from './gemini-server';
+import { TypeformAuditResponse } from './typeform-parser.js';
+import { ROIMetrics, formatCurrency } from './roi-calculator.js';
+import { ROIAnalysis } from './gemini-server.js';
 
 export interface EmailResult {
   success: boolean;

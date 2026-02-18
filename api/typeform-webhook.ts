@@ -5,7 +5,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as crypto from 'crypto';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { MailService } from '@sendgrid/mail';
-import { analyzeBusinessComprehensive, ComprehensiveROIAnalysis } from './_lib/gemini-comprehensive';
+import { analyzeBusinessComprehensive, ComprehensiveROIAnalysis } from './_lib/gemini-comprehensive.js';
 
 // ============================================================================
 // TYPES

@@ -1,7 +1,7 @@
 // ROI Calculator
 // Calculates concrete ROI metrics from Typeform audit responses
 
-import { TypeformAuditResponse } from './typeform-parser';
+import { TypeformAuditResponse } from './typeform-parser.js';
 
 export interface ROIMetrics {
   weeklyLaborCost: number;

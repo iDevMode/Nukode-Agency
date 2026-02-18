@@ -4,10 +4,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import React from 'react';
 import { renderToBuffer } from '@react-pdf/renderer';
-import { getSubmissionByReportToken } from './_lib/supabase';
-import { AuditReportDocument } from './_lib/pdf/report-document';
-import type { ComprehensiveROIAnalysis } from './_lib/gemini-comprehensive';
-import type { ROIMetrics } from './_lib/roi-calculator';
+import { getSubmissionByReportToken } from './_lib/supabase.js';
+import { AuditReportDocument } from './_lib/pdf/report-document.js';
+import type { ComprehensiveROIAnalysis } from './_lib/gemini-comprehensive.js';
+import type { ROIMetrics } from './_lib/roi-calculator.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {

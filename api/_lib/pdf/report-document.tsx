@@ -1,8 +1,8 @@
 import React from 'react';
 import { Document, Page, Text, View } from '@react-pdf/renderer';
-import { styles, colors } from './pdf-styles';
-import type { ComprehensiveROIAnalysis } from '../gemini-comprehensive';
-import type { ROIMetrics } from '../roi-calculator';
+import { styles, colors } from './pdf-styles.js';
+import type { ComprehensiveROIAnalysis } from '../gemini-comprehensive.js';
+import type { ROIMetrics } from '../roi-calculator.js';
 
 interface ReportProps {
   companyName: string;

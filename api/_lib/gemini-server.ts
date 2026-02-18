@@ -2,8 +2,8 @@
 // Adapted for Vercel serverless functions with enhanced prompting
 
 import { GoogleGenAI, Type } from '@google/genai';
-import { TypeformAuditResponse } from './typeform-parser';
-import { ROIMetrics, formatCurrency } from './roi-calculator';
+import { TypeformAuditResponse } from './typeform-parser.js';
+import { ROIMetrics, formatCurrency } from './roi-calculator.js';
 
 export interface ROIAnalysis {
   strategy: string;

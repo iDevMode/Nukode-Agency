@@ -3,8 +3,8 @@
 // Returns summary JSON for the results web page
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getSubmissionByReportToken } from './_lib/supabase';
-import type { ComprehensiveROIAnalysis } from './_lib/gemini-comprehensive';
+import { getSubmissionByReportToken } from './_lib/supabase.js';
+import type { ComprehensiveROIAnalysis } from './_lib/gemini-comprehensive.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
