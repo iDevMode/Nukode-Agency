@@ -274,7 +274,7 @@ async function sendROIEmail(data: {
   reportUrl: string;
 }): Promise<{ success: boolean; messageId?: string; error?: string }> {
   const apiKey = process.env.SENDGRID_API_KEY;
-  const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil@nukode.co.uk';
+  const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil.shields92@gmail.com';
   if (!apiKey) throw new Error('Missing SENDGRID_API_KEY');
 
   const mailService = new MailService();
@@ -362,7 +362,7 @@ async function sendAdminNotificationEmail(data: {
   reportUrl: string;
 }): Promise<{ success: boolean; error?: string }> {
   const apiKey = process.env.SENDGRID_API_KEY;
-  const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil@nukode.co.uk';
+  const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil.shields92@gmail.com';
   const adminEmail = process.env.ADMIN_EMAIL || 'phil.shields92@gmail.com';
   if (!apiKey) return { success: false, error: 'Missing SENDGRID_API_KEY' };
 

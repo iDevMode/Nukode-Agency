@@ -84,7 +84,7 @@ async function sendBookingConfirmationEmail(data: {
   joinUrl?: string;
 }): Promise<{ success: boolean; error?: string }> {
   const apiKey = process.env.SENDGRID_API_KEY;
-  const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil@nukode.co.uk';
+  const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil.shields92@gmail.com';
 
   if (!apiKey) {
     console.error('Missing SENDGRID_API_KEY');
@@ -202,7 +202,7 @@ async function sendCancellationEmail(data: {
   timezone: string;
 }): Promise<{ success: boolean; error?: string }> {
   const apiKey = process.env.SENDGRID_API_KEY;
-  const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil@nukode.co.uk';
+  const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil.shields92@gmail.com';
 
   if (!apiKey) {
     return { success: false, error: 'Missing SENDGRID_API_KEY' };

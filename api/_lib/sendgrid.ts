@@ -36,7 +36,7 @@ export async function sendROIEmail(data: EmailData): Promise<EmailResult> {
   try {
     initSendGrid();
 
-    const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil@nukode.co.uk';
+    const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil.shields92@gmail.com';
     const templateId = process.env.SENDGRID_TEMPLATE_ID;
 
     // Build template data for SendGrid dynamic template
