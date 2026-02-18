@@ -5,7 +5,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as crypto from 'crypto';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { MailService } from '@sendgrid/mail';
-import { GoogleGenAI, Type } from '@google/genai';
+import { analyzeBusinessComprehensive, ComprehensiveROIAnalysis } from './_lib/gemini-comprehensive';
 
 // ============================================================================
 // TYPES
@@ -16,12 +16,15 @@ interface TypeformAuditResponse {
   industry: string;
   companySize: string;
   annualRevenue: string;
+  role: string;
   primaryChallenge: string[];
   timeConsumingProcesses: string[];
+  biggestBottleneck: string;
   hoursPerWeekOnManualTasks: number;
   employeesOnRepetitiveTasks: number;
   hourlyCostPerEmployee: string;
   monthlyOperatingCosts: string;
+  automationExperience: string;
   currentTechStack: string[];
   desiredOutcomes: string[];
   expectedROITimeline: string;
@@ -63,6 +66,7 @@ interface ROIMetrics {
   totalWeeklyHours: number;
 }
 
+// Backward-compat summary extracted from comprehensive analysis
 interface ROIAnalysis {
   strategy: string;
   implementation: string;
@@ -70,44 +74,36 @@ interface ROIAnalysis {
 }
 
 // ============================================================================
-// TYPEFORM PARSER
+// TYPEFORM PARSER (ref-based mapping)
 // ============================================================================
 
-// Actual Typeform field refs (UUIDs from the form)
 const FIELD_MAPPING: Record<string, keyof TypeformAuditResponse> = {
-  // Industry
-  '59cce49b-2b92-49d6-9382-b99b2ac7f489': 'industry',
-  // Company size (employees)
-  'a0b06f51-a9af-4435-ba24-586fac9fef0c': 'companySize',
-  // Monthly revenue
-  '364b311c-e0f6-4b2d-8d8e-a84c8a437612': 'annualRevenue',
-  // Time-consuming manual tasks
-  '7ee3b35e-948b-4c15-b47c-e8dd820fd729': 'timeConsumingProcesses',
-  // Hours per week on manual tasks
-  'a4827bca-e62d-48e4-8b3a-074f5468adb9': 'hoursPerWeekOnManualTasks',
-  // Biggest frustration (primary challenge)
-  '2ac4774b-c06a-4851-a4e7-5c007043b565': 'primaryChallenge',
-  // Current tools/systems
-  '7921673a-99df-45b5-9550-4c7cd06bdc2d': 'currentTechStack',
-  // AI experimentation - not mapped
-  // Success criteria (desired outcomes)
-  '7c5d10e5-3493-45da-914a-f14cb909f13f': 'desiredOutcomes',
-  // Name - not in our interface, but we can ignore
-  'ff16e4fa-c41c-4637-98cf-ae43f5904a1d': 'companyName', // Using name as company name fallback
-  // Email
-  '47c330da-bcfb-41f5-b81f-372487b708b2': 'email',
-  // Phone
-  '7d71a621-b2ff-4137-9d45-4b2110c3ad11': 'phone',
-  // Company name
-  '2dc5baff-bcf2-4d22-a43d-2c88ebb5726d': 'companyName',
-  // Timeline
-  'ce2a12a5-78c3-4906-9755-cff0bb9e6338': 'expectedROITimeline',
+  'company_name': 'companyName',
+  'industry': 'industry',
+  'company_size': 'companySize',
+  'annual_revenue': 'annualRevenue',
+  'contact_role': 'role',
+  'primary_challenge': 'primaryChallenge',
+  'time_consuming_processes': 'timeConsumingProcesses',
+  'biggest_bottleneck': 'biggestBottleneck',
+  'hours_per_week_manual': 'hoursPerWeekOnManualTasks',
+  'employees_repetitive_tasks': 'employeesOnRepetitiveTasks',
+  'hourly_cost_employee': 'hourlyCostPerEmployee',
+  'monthly_operating_costs': 'monthlyOperatingCosts',
+  'automation_experience': 'automationExperience',
+  'current_tech_stack': 'currentTechStack',
+  'desired_outcomes': 'desiredOutcomes',
+  'expected_roi_timeline': 'expectedROITimeline',
+  'implementation_budget': 'implementationBudget',
+  'email': 'email',
+  'phone': 'phone',
+  'best_time_contact': 'bestTimeToContact',
 };
 
 function extractAnswerValue(answer: TypeformAnswer): string | string[] | number | undefined {
   switch (answer.type) {
-    case 'text': return answer.text;
-    case 'long_text': return answer.text; // long_text also uses .text
+    case 'text':
+    case 'long_text': return answer.text;
     case 'email': return answer.email;
     case 'phone_number': return answer.phone_number;
     case 'number': return answer.number;
@@ -124,12 +120,15 @@ function parseTypeformPayload(payload: TypeformWebhookPayload): TypeformAuditRes
     industry: '',
     companySize: '',
     annualRevenue: '',
+    role: '',
     primaryChallenge: [],
     timeConsumingProcesses: [],
+    biggestBottleneck: '',
     hoursPerWeekOnManualTasks: 0,
     employeesOnRepetitiveTasks: 0,
     hourlyCostPerEmployee: '',
     monthlyOperatingCosts: '',
+    automationExperience: '',
     currentTechStack: [],
     desiredOutcomes: [],
     expectedROITimeline: '',
@@ -145,10 +144,9 @@ function parseTypeformPayload(payload: TypeformWebhookPayload): TypeformAuditRes
     const value = extractAnswerValue(answer);
     if (value !== undefined) {
       if (propertyName === 'hoursPerWeekOnManualTasks') {
-        // Parse hours from choice label like "10-20 hours" or "20+ hours"
         const strValue = String(value);
         const match = strValue.match(/(\d+)/);
-        (response as any)[propertyName] = match ? parseInt(match[1], 10) : 10;
+        (response as any)[propertyName] = match ? parseInt(match[1], 10) : typeof value === 'number' ? value : 10;
       } else if (propertyName === 'employeesOnRepetitiveTasks') {
         (response as any)[propertyName] = typeof value === 'number' ? value : parseInt(String(value), 10) || 1;
       } else if (['primaryChallenge', 'timeConsumingProcesses', 'currentTechStack', 'desiredOutcomes'].includes(propertyName)) {
@@ -159,11 +157,8 @@ function parseTypeformPayload(payload: TypeformWebhookPayload): TypeformAuditRes
     }
   }
 
-  // More lenient validation - only email is truly required
   if (!response.email) throw new Error('Missing required field: email');
-  // Default company name if not provided
   if (!response.companyName) response.companyName = 'Unknown Company';
-  // Default employees if not provided
   if (!response.employeesOnRepetitiveTasks) response.employeesOnRepetitiveTasks = 1;
 
   return response;
@@ -260,63 +255,11 @@ async function getSubmissionByTypeformId(typeformId: string): Promise<any | null
 }
 
 // ============================================================================
-// GEMINI AI
+// REPORT TOKEN
 // ============================================================================
 
-async function analyzeBusinessROI(auditResponse: TypeformAuditResponse, roiMetrics: ROIMetrics): Promise<ROIAnalysis> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error('Missing GEMINI_API_KEY');
-
-  const ai = new GoogleGenAI({ apiKey });
-  const prompt = `
-You are a senior AI Automation Consultant for "Nukode".
-
-## Client Information
-- Company: ${auditResponse.companyName}
-- Industry: ${auditResponse.industry}
-- Company Size: ${auditResponse.companySize}
-
-## Pain Points
-- Primary Challenges: ${auditResponse.primaryChallenge.join(', ')}
-- Time-Consuming Processes: ${auditResponse.timeConsumingProcesses.join(', ')}
-
-## Manual Work Analysis
-- Hours per week: ${auditResponse.hoursPerWeekOnManualTasks}
-- Employees affected: ${auditResponse.employeesOnRepetitiveTasks}
-- Monthly cost: ${formatCurrency(roiMetrics.monthlyLaborCost)}
-
-## Goals
-- Desired Outcomes: ${auditResponse.desiredOutcomes.join(', ')}
-
-Propose ONE specific, high-ROI AI automation solution.
-
-Return JSON:
-{
-  "strategy": "Catchy title (max 6 words)",
-  "implementation": "2-3 sentence description",
-  "savings": "Realistic estimate based on numbers provided"
-}`;
-
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          strategy: { type: Type.STRING },
-          implementation: { type: Type.STRING },
-          savings: { type: Type.STRING },
-        },
-        required: ['strategy', 'implementation', 'savings'],
-      },
-    },
-  });
-
-  const text = response.text;
-  if (!text) throw new Error('No response from Gemini');
-  return JSON.parse(text) as ROIAnalysis;
+function generateReportToken(): string {
+  return crypto.randomBytes(32).toString('hex');
 }
 
 // ============================================================================
@@ -328,6 +271,7 @@ async function sendROIEmail(data: {
   email: string;
   analysis: ROIAnalysis;
   metrics: ROIMetrics;
+  reportUrl: string;
 }): Promise<{ success: boolean; messageId?: string; error?: string }> {
   const apiKey = process.env.SENDGRID_API_KEY;
   const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil@nukode.co.uk';
@@ -348,7 +292,9 @@ async function sendROIEmail(data: {
     .metric-label { color: #666; font-size: 12px; text-transform: uppercase; }
     .metric-value { color: #050505; font-size: 24px; font-weight: bold; }
     .strategy-box { background: #3b82f6; color: #fff; padding: 20px; border-radius: 6px; margin: 20px 0; }
+    .report-box { background: #050505; color: #fff; padding: 25px; border-radius: 6px; margin: 20px 0; text-align: center; }
     .cta-button { display: inline-block; background: #3b82f6; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; }
+    .cta-button-secondary { display: inline-block; background: #050505; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -372,8 +318,15 @@ async function sendROIEmail(data: {
       <p><strong>${data.analysis.savings}</strong></p>
     </div>
     <p>Potential annual savings: <strong>${formatCurrency(data.metrics.potentialSavings30Percent)} - ${formatCurrency(data.metrics.potentialSavings50Percent)}</strong></p>
+
+    <div class="report-box">
+      <h3 style="margin: 0 0 8px 0;">Your Comprehensive Report is Ready</h3>
+      <p style="margin: 0 0 15px 0; opacity: 0.8; font-size: 14px;">View your full AI Automation Audit Report with detailed solutions, implementation roadmap, and financial projections.</p>
+      <a href="${data.reportUrl}" class="cta-button">View & Download Your Report</a>
+    </div>
+
     <div style="text-align: center; margin-top: 30px;">
-      <a href="https://calendly.com/phil-shields92" class="cta-button">Book Your Free Strategy Call</a>
+      <a href="https://calendly.com/phil-shields92" class="cta-button-secondary">Book Your Free Strategy Call</a>
     </div>
   </div>
 </body>
@@ -397,12 +350,16 @@ async function sendAdminNotificationEmail(data: {
   companyName: string;
   email: string;
   phone?: string;
+  role: string;
   industry: string;
   companySize: string;
   challenges: string[];
   processes: string[];
+  biggestBottleneck: string;
+  automationExperience: string;
   analysis: ROIAnalysis;
   metrics: ROIMetrics;
+  reportUrl: string;
 }): Promise<{ success: boolean; error?: string }> {
   const apiKey = process.env.SENDGRID_API_KEY;
   const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'phil@nukode.co.uk';
@@ -437,12 +394,14 @@ async function sendAdminNotificationEmail(data: {
       <div class="label">Contact Information</div>
       <div class="value">${data.email}</div>
       ${data.phone ? `<div class="value">${data.phone}</div>` : ''}
+      ${data.role ? `<div class="value">Role: ${data.role}</div>` : ''}
     </div>
 
     <div class="section">
       <div class="label">Company Details</div>
       <div class="value">Industry: ${data.industry || 'Not specified'}</div>
       <div class="value">Size: ${data.companySize || 'Not specified'}</div>
+      <div class="value">Automation Experience: ${data.automationExperience || 'Not specified'}</div>
     </div>
 
     <div class="section">
@@ -454,6 +413,13 @@ async function sendAdminNotificationEmail(data: {
       <div class="label">Time-Consuming Processes</div>
       <ul>${data.processes.map(p => `<li>${p}</li>`).join('')}</ul>
     </div>
+
+    ${data.biggestBottleneck ? `
+    <div class="section">
+      <div class="label">Biggest Bottleneck (Their Words)</div>
+      <div class="value" style="font-style: italic;">"${data.biggestBottleneck}"</div>
+    </div>
+    ` : ''}
 
     <div class="section">
       <div class="label">ROI Metrics</div>
@@ -470,6 +436,7 @@ async function sendAdminNotificationEmail(data: {
     </div>
 
     <div style="text-align: center; margin-top: 20px;">
+      <a href="${data.reportUrl}" style="display: inline-block; background: #050505; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-right: 10px;">View Client Report</a>
       <a href="https://calendly.com/phil-shields92" style="display: inline-block; background: #1e40af; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Calendly Bookings</a>
     </div>
   </div>
@@ -499,7 +466,7 @@ async function sendAdminNotificationEmail(data: {
 
 function verifySignature(payload: string, signature: string | undefined): boolean {
   const secret = process.env.TYPEFORM_WEBHOOK_SECRET;
-  if (!secret) return true; // Skip if no secret configured
+  if (!secret) return true;
   if (!signature) return false;
   const expected = `sha256=${crypto.createHmac('sha256', secret).update(payload).digest('base64')}`;
   try {
@@ -540,7 +507,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Calculate ROI
     const roiMetrics = calculateROIMetrics(auditResponse);
 
-    // Store in Supabase
+    // Generate report token
+    const reportToken = generateReportToken();
+    const baseUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.BASE_URL || 'https://nukode.co.uk';
+    const reportUrl = `${baseUrl}/report?token=${reportToken}`;
+
+    // Store in Supabase (with new fields)
     submissionId = await createSubmission({
       typeform_response_id: typeformResponseId,
       company_name: auditResponse.companyName,
@@ -549,11 +523,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       annual_revenue: auditResponse.annualRevenue || null,
       email: auditResponse.email,
       phone: auditResponse.phone || null,
+      contact_role: auditResponse.role || null,
+      biggest_bottleneck: auditResponse.biggestBottleneck || null,
+      automation_experience: auditResponse.automationExperience || null,
       primary_challenges: auditResponse.primaryChallenge,
       time_consuming_processes: auditResponse.timeConsumingProcesses,
       hours_per_week_manual: auditResponse.hoursPerWeekOnManualTasks,
       employees_on_repetitive_tasks: auditResponse.employeesOnRepetitiveTasks,
       hourly_cost_per_employee: auditResponse.hourlyCostPerEmployee,
+      monthly_operating_costs: auditResponse.monthlyOperatingCosts || null,
+      implementation_budget: auditResponse.implementationBudget || null,
       desired_outcomes: auditResponse.desiredOutcomes,
       calculated_weekly_cost: roiMetrics.weeklyLaborCost,
       calculated_monthly_cost: roiMetrics.monthlyLaborCost,
@@ -561,46 +540,64 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ai_strategy: null,
       ai_implementation: null,
       ai_savings: null,
+      ai_full_analysis: null,
+      report_token: reportToken,
       processing_status: 'processing',
     });
 
-    // Generate AI analysis
-    let aiAnalysis: ROIAnalysis;
+    // Generate comprehensive AI analysis
+    let comprehensiveAnalysis: ComprehensiveROIAnalysis | null = null;
+    let aiSummary: ROIAnalysis;
+
     try {
-      aiAnalysis = await analyzeBusinessROI(auditResponse, roiMetrics);
+      comprehensiveAnalysis = await analyzeBusinessComprehensive(auditResponse, roiMetrics);
+
+      // Extract backward-compatible summary from executive summary
+      aiSummary = {
+        strategy: comprehensiveAnalysis.executiveSummary.headline,
+        implementation: comprehensiveAnalysis.executiveSummary.overview,
+        savings: comprehensiveAnalysis.executiveSummary.toplineROI,
+      };
+
       await updateSubmission(submissionId, {
-        ai_strategy: aiAnalysis.strategy,
-        ai_implementation: aiAnalysis.implementation,
-        ai_savings: aiAnalysis.savings,
+        ai_strategy: aiSummary.strategy,
+        ai_implementation: aiSummary.implementation,
+        ai_savings: aiSummary.savings,
+        ai_full_analysis: comprehensiveAnalysis,
       });
     } catch (err) {
-      console.error('AI analysis failed:', err);
-      aiAnalysis = {
+      console.error('Comprehensive AI analysis failed:', err);
+      aiSummary = {
         strategy: 'Custom AI Automation Solution',
         implementation: 'Our team will analyze your challenges and design a tailored solution.',
         savings: `Estimated ${formatCurrency(roiMetrics.potentialSavings30Percent)}-${formatCurrency(roiMetrics.potentialSavings50Percent)} annually`,
       };
     }
 
-    // Send client email
+    // Send client email (with report link)
     const emailResult = await sendROIEmail({
       companyName: auditResponse.companyName,
       email: auditResponse.email,
-      analysis: aiAnalysis,
+      analysis: aiSummary,
       metrics: roiMetrics,
+      reportUrl,
     });
 
-    // Send admin notification email
+    // Send admin notification email (with new fields)
     const adminEmailResult = await sendAdminNotificationEmail({
       companyName: auditResponse.companyName,
       email: auditResponse.email,
       phone: auditResponse.phone,
+      role: auditResponse.role,
       industry: auditResponse.industry,
       companySize: auditResponse.companySize,
       challenges: auditResponse.primaryChallenge,
       processes: auditResponse.timeConsumingProcesses,
-      analysis: aiAnalysis,
+      biggestBottleneck: auditResponse.biggestBottleneck,
+      automationExperience: auditResponse.automationExperience,
+      analysis: aiSummary,
       metrics: roiMetrics,
+      reportUrl,
     });
 
     if (!adminEmailResult.success) {

@@ -19,11 +19,11 @@ async function createAndApplyTheme() {
     const theme = {
       name: 'Nukode Dark Theme',
       font: 'Playfair Display',  // Serif font for questions/titles
-      has_transparent_button: true,  // Minimal button - just text, no background/border
+      has_transparent_button: false, // Solid button so text is readable
       colors: {
         question: '#e5e5e5',        // nukode-text (main questions)
         answer: '#ffffff',           // white (user input)
-        button: '#ffffff',           // white (button text)
+        button: '#050505',           // dark text on white button background
         background: '#050505',       // nukode-black (main background)
       },
     };
@@ -94,7 +94,7 @@ async function createAndApplyTheme() {
     console.log('\n🎨 Your Typeform now matches your Nukode brand!');
     console.log('Typography: Playfair Display (questions) + Inter fallback');
     console.log('Colors: Dark background (#050505) with light text (#e5e5e5)');
-    console.log('Buttons: Minimal white text only (no background/border)');
+    console.log('Buttons: Solid white with dark text (#050505)');
     console.log(`\nView your branded form at: https://form.typeform.com/to/${TYPEFORM_FORM_ID}`);
     console.log(`Edit your form at: https://admin.typeform.com/form/${TYPEFORM_FORM_ID}/create`);
   } catch (error: any) {

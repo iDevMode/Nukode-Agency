@@ -6,12 +6,15 @@ export interface TypeformAuditResponse {
   industry: string;
   companySize: string;
   annualRevenue: string;
+  role: string;
   primaryChallenge: string[];
   timeConsumingProcesses: string[];
+  biggestBottleneck: string;
   hoursPerWeekOnManualTasks: number;
   employeesOnRepetitiveTasks: number;
   hourlyCostPerEmployee: string;
   monthlyOperatingCosts: string;
+  automationExperience: string;
   currentTechStack: string[];
   desiredOutcomes: string[];
   expectedROITimeline: string;
@@ -73,12 +76,15 @@ const FIELD_MAPPING: Record<string, keyof TypeformAuditResponse> = {
   'industry': 'industry',
   'company_size': 'companySize',
   'annual_revenue': 'annualRevenue',
+  'contact_role': 'role',
   'primary_challenge': 'primaryChallenge',
   'time_consuming_processes': 'timeConsumingProcesses',
+  'biggest_bottleneck': 'biggestBottleneck',
   'hours_per_week_manual': 'hoursPerWeekOnManualTasks',
   'employees_repetitive_tasks': 'employeesOnRepetitiveTasks',
   'hourly_cost_employee': 'hourlyCostPerEmployee',
   'monthly_operating_costs': 'monthlyOperatingCosts',
+  'automation_experience': 'automationExperience',
   'current_tech_stack': 'currentTechStack',
   'desired_outcomes': 'desiredOutcomes',
   'expected_roi_timeline': 'expectedROITimeline',
@@ -91,6 +97,7 @@ const FIELD_MAPPING: Record<string, keyof TypeformAuditResponse> = {
 function extractAnswerValue(answer: TypeformAnswer): string | string[] | number | undefined {
   switch (answer.type) {
     case 'text':
+    case 'long_text':
       return answer.text;
     case 'email':
       return answer.email;
@@ -117,12 +124,15 @@ export function parseTypeformPayload(payload: TypeformWebhookPayload): TypeformA
     industry: '',
     companySize: '',
     annualRevenue: '',
+    role: '',
     primaryChallenge: [],
     timeConsumingProcesses: [],
+    biggestBottleneck: '',
     hoursPerWeekOnManualTasks: 0,
     employeesOnRepetitiveTasks: 0,
     hourlyCostPerEmployee: '',
     monthlyOperatingCosts: '',
+    automationExperience: '',
     currentTechStack: [],
     desiredOutcomes: [],
     expectedROITimeline: '',

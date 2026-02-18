@@ -11,11 +11,16 @@ export interface AuditSubmission {
   annual_revenue: string | null;
   email: string;
   phone: string | null;
+  contact_role: string | null;
+  biggest_bottleneck: string | null;
+  automation_experience: string | null;
   primary_challenges: string[];
   time_consuming_processes: string[];
   hours_per_week_manual: number;
   employees_on_repetitive_tasks: number;
   hourly_cost_per_employee: string;
+  monthly_operating_costs: string | null;
+  implementation_budget: string | null;
   desired_outcomes: string[];
   calculated_weekly_cost: number | null;
   calculated_monthly_cost: number | null;
@@ -23,6 +28,8 @@ export interface AuditSubmission {
   ai_strategy: string | null;
   ai_implementation: string | null;
   ai_savings: string | null;
+  ai_full_analysis: Record<string, any> | null;
+  report_token: string | null;
   email_sent: boolean;
   email_sent_at: string | null;
   processing_status: 'pending' | 'processing' | 'completed' | 'failed';
@@ -98,6 +105,25 @@ export async function getSubmissionByTypeformId(
   if (error && error.code !== 'PGRST116') {
     console.error('Supabase select error:', error);
     throw new Error(`Failed to get submission: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function getSubmissionByReportToken(
+  reportToken: string
+): Promise<AuditSubmission | null> {
+  const client = getSupabaseClient();
+
+  const { data, error } = await client
+    .from('audit_submissions')
+    .select('*')
+    .eq('report_token', reportToken)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('Supabase select error:', error);
+    throw new Error(`Failed to get submission by report token: ${error.message}`);
   }
 
   return data;

@@ -5,12 +5,15 @@ export interface TypeformAuditResponse {
   industry: string;
   companySize: string;
   annualRevenue: string;
+  role: string;
   primaryChallenge: string[];
   timeConsumingProcesses: string[];
+  biggestBottleneck: string;
   hoursPerWeekOnManualTasks: number;
   employeesOnRepetitiveTasks: number;
   hourlyCostPerEmployee: string;
   monthlyOperatingCosts: string;
+  automationExperience: string;
   currentTechStack: string[];
   desiredOutcomes: string[];
   expectedROITimeline: string;
@@ -129,6 +132,23 @@ export const ImplementationBudgetOptions = [
   '£50K - £100K',
   '£100K+',
   'Not sure yet'
+];
+
+export const ContactRoleOptions = [
+  'CEO / Founder',
+  'Operations / COO',
+  'IT / Technology',
+  'Marketing',
+  'Sales',
+  'Finance',
+  'Other'
+];
+
+export const AutomationExperienceOptions = [
+  'Never tried',
+  'Tried but unsuccessful',
+  'Have some basic automation',
+  'Have significant automation'
 ];
 
 export const BestTimeOptions = [

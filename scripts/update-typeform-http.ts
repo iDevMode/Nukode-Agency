@@ -11,6 +11,8 @@ import {
   DesiredOutcomesOptions,
   ROITimelineOptions,
   ImplementationBudgetOptions,
+  ContactRoleOptions,
+  AutomationExperienceOptions,
   BestTimeOptions,
 } from './typeform-types';
 
@@ -27,7 +29,7 @@ if (!TYPEFORM_API_TOKEN) {
 
 async function updateTypeform() {
   try {
-    console.log('Updating Typeform with 17 essential questions...\n');
+    console.log('Updating Typeform with 20 essential questions...\n');
 
     const formUpdate = {
       title: 'AI Automation Audit - Nukode',
@@ -44,10 +46,10 @@ async function updateTypeform() {
       ],
       thankyou_screens: [
         {
-          title: 'Thank you! Your AI Automation Audit is being prepared.',
+          title: 'Thank you! Your comprehensive AI Automation Audit Report is being prepared.',
           properties: {
             description:
-              "We'll analyze your responses and send you a detailed ROI report within 24-48 hours. Keep an eye on your inbox!",
+              "Our AI is analyzing your responses right now. You'll receive an email within minutes with a link to view and download your personalised PDF report.",
             show_button: false,
             share_icons: false,
           },
@@ -97,6 +99,18 @@ async function updateTypeform() {
           },
         },
 
+        {
+          title: 'What is your role in the company?',
+          ref: 'contact_role',
+          type: 'dropdown',
+          properties: {
+            choices: ContactRoleOptions.map((option) => ({ label: option })),
+          },
+          validations: {
+            required: true,
+          },
+        },
+
         // Critical for ROI Calculation
         {
           title: 'What are your primary business challenges? (Select all that apply)',
@@ -123,7 +137,16 @@ async function updateTypeform() {
           },
         },
         {
-          title: 'Approximately how many hours per week does your team spend on manual/repetitive tasks?',
+          title: 'In 2-3 sentences, describe the task or workflow that wastes the most time for your team.',
+          ref: 'biggest_bottleneck',
+          type: 'long_text',
+          properties: {},
+          validations: {
+            required: true,
+          },
+        },
+        {
+          title: 'How many hours per week does EACH employee typically spend on manual/repetitive tasks?',
           ref: 'hours_per_week_manual',
           type: 'number',
           properties: {},
@@ -168,6 +191,17 @@ async function updateTypeform() {
           properties: {
             allow_multiple_selection: true,
             choices: TechStackOptions.map((option) => ({ label: option })),
+          },
+        },
+        {
+          title: 'Have you tried automating any processes before?',
+          ref: 'automation_experience',
+          type: 'dropdown',
+          properties: {
+            choices: AutomationExperienceOptions.map((option) => ({ label: option })),
+          },
+          validations: {
+            required: true,
           },
         },
         {
@@ -224,6 +258,19 @@ async function updateTypeform() {
       ],
     };
 
+    // Fetch current form to preserve theme
+    console.log(`Fetching current form to preserve theme...`);
+    const currentFormResponse = await fetch(`https://api.typeform.com/forms/${TYPEFORM_FORM_ID}`, {
+      headers: { 'Authorization': `Bearer ${TYPEFORM_API_TOKEN}` },
+    });
+    if (currentFormResponse.ok) {
+      const currentForm = await currentFormResponse.json();
+      if (currentForm.theme) {
+        (formUpdate as any).theme = currentForm.theme;
+        console.log(`Preserving theme: ${currentForm.theme.href}`);
+      }
+    }
+
     console.log(`Updating form: ${TYPEFORM_FORM_ID}...`);
 
     const response = await fetch(`https://api.typeform.com/forms/${TYPEFORM_FORM_ID}`, {
@@ -244,7 +291,7 @@ async function updateTypeform() {
     }
 
     const result = await response.json();
-    console.log('\n✅ Success! Your Typeform has been updated with 17 questions.');
+    console.log('\n✅ Success! Your Typeform has been updated with 20 questions.');
     console.log(`\nView your form at: https://form.typeform.com/to/${TYPEFORM_FORM_ID}`);
     console.log(`Edit your form at: https://admin.typeform.com/form/${TYPEFORM_FORM_ID}/create`);
   } catch (error: any) {

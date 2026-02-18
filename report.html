@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your AI Automation Audit Report - Nukode</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #fafafa;
+      color: #1a1a1a;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #050505;
+      padding: 20px 0;
+    }
+    .header-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      color: #3b82f6;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-decoration: none;
+    }
+    .header-link {
+      color: #999;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .header-link:hover { color: #fff; }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Loading state */
+    .loading {
+      text-align: center;
+      padding: 80px 0;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e5e5e5;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: #666; font-size: 14px; }
+
+    /* Error state */
+    .error {
+      text-align: center;
+      padding: 80px 0;
+    }
+    .error h2 { color: #333; margin-bottom: 8px; }
+    .error p { color: #666; font-size: 14px; }
+
+    /* Report content */
+    .report { display: none; }
+    .report.visible { display: block; }
+
+    .report-header {
+      margin-bottom: 32px;
+    }
+    .report-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #3b82f6;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .report-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #050505;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .report-company {
+      font-size: 16px;
+      color: #666;
+    }
+
+    /* Metric cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .metric-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .metric-card.highlight {
+      background: #eff6ff;
+      border-color: #3b82f6;
+    }
+    .metric-card .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #999;
+      margin-bottom: 6px;
+    }
+    .metric-card .value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #050505;
+    }
+    .metric-card.highlight .value {
+      color: #3b82f6;
+    }
+
+    /* Summary section */
+    .summary-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 32px;
+    }
+    .summary-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #050505;
+      margin-bottom: 12px;
+    }
+    .summary-card p {
+      color: #4a4a4a;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .topline-roi {
+      background: #050505;
+      color: #fff;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-top: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Download section */
+    .download-section {
+      background: #050505;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .download-section h3 {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .download-section p {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .download-btn:hover { background: #2563eb; }
+    .download-btn svg { width: 18px; height: 18px; }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      padding: 32px;
+      border: 2px dashed #e5e5e5;
+      border-radius: 12px;
+    }
+    .cta-section h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .cta-section p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: #050505;
+      color: #fff;
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .cta-btn:hover { background: #333; }
+
+    .solutions-note {
+      color: #666;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-inner">
+      <a href="https://nukode.co.uk" class="brand">NUKODE</a>
+      <a href="https://nukode.co.uk" class="header-link">nukode.co.uk</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Loading -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading your report...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="error" id="error" style="display:none;">
+      <h2>Report Not Found</h2>
+      <p id="error-message">We couldn't find your report. Please check the link in your email.</p>
+    </div>
+
+    <!-- Report content -->
+    <div class="report" id="report">
+      <div class="report-header">
+        <div class="report-label">AI Automation Audit Report</div>
+        <h1 class="report-title" id="headline"></h1>
+        <p class="report-company">Prepared for <strong id="companyName"></strong></p>
+      </div>
+
+      <div class="metrics-grid" id="metricsGrid"></div>
+
+      <div class="summary-card">
+        <h3>Executive Summary</h3>
+        <p id="overview"></p>
+        <div class="topline-roi" id="toplineROI"></div>
+      </div>
+
+      <div class="download-section" id="downloadSection">
+        <h3>Your Full Report is Ready</h3>
+        <p>Download your comprehensive PDF report with detailed solutions, implementation roadmap, and financial analysis.</p>
+        <a class="download-btn" id="downloadBtn" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Download Full Report (PDF)
+        </a>
+        <p class="solutions-note" id="solutionsNote"></p>
+      </div>
+
+      <div class="cta-section">
+        <h3>Ready to Implement?</h3>
+        <p>Book a free 30-minute strategy call to discuss your personalised automation roadmap.</p>
+        <a href="https://calendly.com/phil-shields92" class="cta-btn">Book Your Free Strategy Call</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (async function () {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+      const loadingEl = document.getElementById('loading');
+      const errorEl = document.getElementById('error');
+      const reportEl = document.getElementById('report');
+
+      if (!token) {
+        loadingEl.style.display = 'none';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/get-report-data?token=' + encodeURIComponent(token));
+        if (!res.ok) throw new Error('not found');
+        const data = await res.json();
+
+        // Populate
+        document.getElementById('headline').textContent = data.executiveSummary.headline;
+        document.getElementById('companyName').textContent = data.companyName;
+        document.getElementById('overview').textContent = data.executiveSummary.overview;
+        document.getElementById('toplineROI').textContent = data.executiveSummary.toplineROI;
+        document.title = 'AI Audit Report - ' + data.companyName + ' - Nukode';
+
+        // Metrics
+        var fmt = function (n) {
+          return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
+        };
+        var grid = document.getElementById('metricsGrid');
+        var metrics = [
+          { label: 'Weekly Manual Hours', value: data.metrics.totalWeeklyHours + 'h', highlight: false },
+          { label: 'Annual Manual Cost', value: fmt(data.metrics.annualLaborCost), highlight: false },
+          { label: 'Conservative Savings', value: fmt(data.metrics.potentialSavingsConservative), highlight: true },
+          { label: 'Optimistic Savings', value: fmt(data.metrics.potentialSavingsOptimistic), highlight: true },
+        ];
+        metrics.forEach(function (m) {
+          var card = document.createElement('div');
+          card.className = 'metric-card' + (m.highlight ? ' highlight' : '');
+          card.innerHTML = '<div class="label">' + m.label + '</div><div class="value">' + m.value + '</div>';
+          grid.appendChild(card);
+        });
+
+        // Download button
+        document.getElementById('downloadBtn').href = '/api/generate-report?token=' + encodeURIComponent(token);
+
+        if (data.hasFullReport) {
+          var note = data.solutionCount > 0
+            ? 'Includes ' + data.solutionCount + ' tailored AI solutions, implementation roadmap, and financial projections.'
+            : '';
+          document.getElementById('solutionsNote').textContent = note;
+        } else {
+          document.getElementById('downloadSection').style.display = 'none';
+        }
+
+        loadingEl.style.display = 'none';
+        reportEl.classList.add('visible');
+      } catch (e) {
+        loadingEl.style.display = 'none';
+        errorEl.style.display = 'block';
+      }
+    })();
+  </script>
+</body>
+</html>
