@@ -447,7 +447,7 @@ async function sendAdminNotificationEmail(data: {
     console.log(`Sending admin notification to ${adminEmail} from ${fromEmail}`);
     const result = await mailService.send({
       to: adminEmail,
-      from: { email: fromEmail, name: 'Nukode Audit System' },
+      from: { email: fromEmail, name: 'Phil Shields' },
       replyTo: data.email,
       subject: `🔔 New Audit Lead: ${data.companyName}`,
       html,
