@@ -14,7 +14,7 @@ function App() {
     const id = window.location.hash.slice(1);
     if (!id) return;
     // Wait for layout (and the browser's own hash jump) before scrolling to the section.
-    const timer = window.setTimeout(() => document.getElementById(id)?.scrollIntoView(), 150);
+    const timer = window.setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'instant' as ScrollBehavior }), 150);
     return () => window.clearTimeout(timer);
   }, []);
 
