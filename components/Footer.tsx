@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
               Transforming businesses with ROI-driven AI automation. We build the future of work, today.
             </p>
             <div className="flex gap-6">
-              <a href="https://www.linkedin.com/in/phillipshields87/" target="_blank" rel="noopener noreferrer" aria-label="Phil Shields on LinkedIn" className="text-nukode-muted hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"><Linkedin className="w-5 h-5" /></a>
+              <a href="https://www.linkedin.com/in/phillipshields87/" target="_blank" rel="noopener noreferrer" aria-label="Nukode on LinkedIn" className="text-nukode-muted hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"><Linkedin className="w-5 h-5" /></a>
             </div>
           </div>
           
