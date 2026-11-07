@@ -4,7 +4,7 @@ import { ArrowDown } from 'lucide-react';
 
 export const Hero: React.FC = () => {
   return (
-    <section id="top" className="relative min-h-screen flex flex-col justify-center items-center pt-20 overflow-hidden">
+    <section id="about" className="relative min-h-screen flex flex-col justify-center items-center pt-20 overflow-hidden">
       {/* Abstract Background Effect */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white opacity-[0.03] blur-[120px] rounded-full pointer-events-none"></div>
       

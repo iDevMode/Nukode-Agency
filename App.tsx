@@ -3,7 +3,6 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { Services } from './components/Services';
 import { Process } from './components/Process';
-import { About } from './components/About';
 import { Pricing } from './components/Pricing';
 import { AiConsultant } from './components/AiConsultant';
 import { Footer } from './components/Footer';
@@ -24,7 +23,6 @@ function App() {
       <Hero />
       <Services />
       <Process />
-      <About />
       <Pricing />
       <AiConsultant />
       <Footer />
