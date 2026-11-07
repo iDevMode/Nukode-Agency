@@ -1,5 +1,6 @@
 import React from 'react';
 import { Code, Twitter, Linkedin, Github } from 'lucide-react';
+import { openCookieSettings } from './CookieConsent';
 
 export const Footer: React.FC = () => {
   const scrollToSection = (e: React.MouseEvent<HTMLElement>, id: string) => {
@@ -7,6 +8,8 @@ export const Footer: React.FC = () => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = `/#${id}`;
     }
   };
 
@@ -42,8 +45,9 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="text-white font-semibold mb-8 text-lg">Legal</h4>
             <ul className="space-y-5">
-              <li><a href="#" className="text-nukode-muted hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-nukode-muted hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="/privacy" className="text-nukode-muted hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms" className="text-nukode-muted hover:text-white transition-colors">Terms of Service</a></li>
+              <li><button onClick={openCookieSettings} className="text-nukode-muted hover:text-white transition-colors">Cookie Settings</button></li>
             </ul>
           </div>
         </div>

@@ -29,7 +29,7 @@ export const AiConsultant: React.FC = () => {
             <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
               <h4 className="text-white font-medium mb-2">Why Nukode?</h4>
               <p className="text-sm text-nukode-muted">
-                Most agencies just "add AI" to everything. We build targeted agents that reduce overhead costs by 40-60% within the first quarter.
+                Most agencies just "add AI" to everything. We only build automations with a clear payback, and we measure the time and cost saved before and after every build.
               </p>
             </div>
           </div>
