@@ -14,7 +14,7 @@ export const Process: React.FC = () => {
     },
     {
       number: "003",
-      title: "Optimization & Support",
+      title: "Optimisation & Support",
       description: "We don't just ship and leave. We monitor performance, iterate on the AI models, and scale as you grow."
     }
   ];

@@ -93,7 +93,7 @@ export const Pricing: React.FC = () => {
         </div>
 
         <p className="text-center text-xs text-nukode-muted mt-8">
-          No commitment required • Response within 24 hours
+          No commitment required • Pick a time that suits you
         </p>
       </div>
     </section>

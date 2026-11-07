@@ -29,7 +29,7 @@ export const AiConsultant: React.FC = () => {
             <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
               <h4 className="text-white font-medium mb-2">Why Nukode?</h4>
               <p className="text-sm text-nukode-muted">
-                Most agencies just "add AI" to everything. We build targeted agents that reduce overhead costs by 40-60% within the first quarter.
+                Most agencies just "add AI" to everything. We build targeted agents that reduce overhead costs, and we measure the savings from day one.
               </p>
             </div>
           </div>
@@ -46,7 +46,7 @@ export const AiConsultant: React.FC = () => {
               </h3>
 
               <p className="text-nukode-muted leading-relaxed">
-                Answer a few quick questions about your business, and we'll generate a personalized AI automation audit showing you exactly how to save time and reduce costs.
+                Answer a few quick questions about your business, and we'll generate a personalised AI automation audit showing you exactly how to save time and reduce costs.
               </p>
 
               <div className="space-y-4 pt-4">
@@ -78,7 +78,7 @@ export const AiConsultant: React.FC = () => {
               </Button>
 
               <p className="text-xs text-nukode-muted">
-                Takes less than 2 minutes • No credit card required
+                Takes 5–10 minutes • No credit card required
               </p>
             </div>
           </div>
