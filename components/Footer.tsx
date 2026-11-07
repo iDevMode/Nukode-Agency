@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code, Twitter, Linkedin, Github } from 'lucide-react';
+import { Code, Linkedin } from 'lucide-react';
 import { openCookieSettings } from './CookieConsent';
 
 export const Footer: React.FC = () => {
@@ -26,9 +26,7 @@ export const Footer: React.FC = () => {
               Transforming businesses with ROI-driven AI automation. We build the future of work, today.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="text-nukode-muted hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"><Twitter className="w-5 h-5" /></a>
-              <a href="#" className="text-nukode-muted hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"><Linkedin className="w-5 h-5" /></a>
-              <a href="#" className="text-nukode-muted hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"><Github className="w-5 h-5" /></a>
+              <a href="https://www.linkedin.com/in/phillipshields87/" target="_blank" rel="noopener noreferrer" aria-label="Phil Shields on LinkedIn" className="text-nukode-muted hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"><Linkedin className="w-5 h-5" /></a>
             </div>
           </div>
           

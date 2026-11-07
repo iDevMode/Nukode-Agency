@@ -4,7 +4,7 @@ import { MessageSquare, Ruler, LineChart } from 'lucide-react';
 // To add a photo: put it in /public (e.g. /public/phil.jpg) and set FOUNDER_PHOTO = '/phil.jpg'.
 // To add LinkedIn: set FOUNDER_LINKEDIN to your profile URL.
 const FOUNDER_PHOTO = '';
-const FOUNDER_LINKEDIN = '';
+const FOUNDER_LINKEDIN = 'https://www.linkedin.com/in/phillipshields87/';
 
 const principles = [
   {
