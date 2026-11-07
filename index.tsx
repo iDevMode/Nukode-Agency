@@ -1,6 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { LegalPage } from './components/LegalPage';
+
+const path = window.location.pathname.replace(/\/+$/, '');
+const page =
+  path === '/privacy' ? <LegalPage kind="privacy" /> :
+  path === '/terms' ? <LegalPage kind="terms" /> :
+  <App />;
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -10,6 +17,6 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    {page}
   </React.StrictMode>
 );
