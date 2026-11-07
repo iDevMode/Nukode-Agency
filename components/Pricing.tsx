@@ -55,7 +55,7 @@ export const Pricing: React.FC = () => {
               className={`relative p-8 rounded-2xl border transition-all duration-300 flex flex-col ${
                 benefit.popular
                   ? 'bg-white/5 border-white/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]'
-                  : 'bg-nukode-card border-white/5 hover:border-white/10'
+                  : 'bg-nukode-card border-white/30'
               }`}
             >
               {benefit.popular && (
