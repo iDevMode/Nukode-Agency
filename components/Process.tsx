@@ -39,7 +39,7 @@ export const Process: React.FC = () => {
               <div className="absolute top-6 right-6 text-6xl font-serif text-white/5 group-hover:text-white/10 transition-colors">
                 {step.number}
               </div>
-              <h3 className="text-2xl font-serif italic text-white mb-6 relative z-10">{step.title}</h3>
+              <h3 className="text-2xl font-serif italic text-white mt-12 mb-6 relative z-10">{step.title}</h3>
               <p className="text-nukode-muted relative z-10 leading-relaxed">
                 {step.description}
               </p>

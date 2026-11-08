@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code, Twitter, Linkedin, Github } from 'lucide-react';
+import { Code, Twitter, Linkedin, Github, Mail } from 'lucide-react';
 import { openCookieSettings } from './CookieConsent';
 
 export const Footer: React.FC = () => {
@@ -25,6 +25,10 @@ export const Footer: React.FC = () => {
             <p className="text-nukode-muted max-w-md mb-8 text-lg font-light leading-relaxed">
               Transforming businesses with ROI-driven AI automation. We build the future of work, today.
             </p>
+            <a href="mailto:phil@nukode.co.uk" className="inline-flex items-center gap-3 text-white hover:text-nukode-muted transition-colors mb-8">
+              <Mail className="w-5 h-5" />
+              <span className="text-lg">phil@nukode.co.uk</span>
+            </a>
             <div className="flex gap-6">
               <a href="#" className="text-nukode-muted hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"><Twitter className="w-5 h-5" /></a>
               <a href="https://www.linkedin.com/in/phillipshields87/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-nukode-muted hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"><Linkedin className="w-5 h-5" /></a>
