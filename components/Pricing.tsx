@@ -43,7 +43,7 @@ export const Pricing: React.FC = () => {
           <h2 className="text-4xl md:text-5xl font-serif text-white mb-4">
             Every Business is <span className="italic">Unique</span>
           </h2>
-          <p className="text-nukode-muted max-w-2xl mx-auto">
+          <p className="text-nukode-muted max-w-2xl mx-auto text-lg font-light">
             That's why we don't do one-size-fits-all pricing. Let's discuss your specific needs and create a solution that delivers real ROI.
           </p>
         </div>

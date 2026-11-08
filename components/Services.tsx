@@ -48,7 +48,7 @@ export const Services: React.FC = () => {
                 {service.icon}
               </div>
               <h3 className="text-xl font-medium text-white mb-4">{service.title}</h3>
-              <p className="text-nukode-muted text-sm leading-relaxed">{service.description}</p>
+              <p className="text-nukode-muted leading-relaxed">{service.description}</p>
             </div>
           ))}
         </div>
