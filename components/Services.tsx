@@ -6,12 +6,12 @@ export const Services: React.FC = () => {
     {
       icon: <Bot className="w-8 h-8" />,
       title: "Intelligent Chatbots",
-      description: "Custom-trained LLMs that handle customer support, internal queries, and lead qualification 24/7 with human-like accuracy."
+      description: "Custom-built AI assistants that handle customer support, internal queries, and lead qualification 24/7."
     },
     {
       icon: <Workflow className="w-8 h-8" />,
       title: "Agentic Workflows",
-      description: "Autonomous agents that can browse the web, scrape data, draft emails, and execute complex sequences without supervision."
+      description: "Autonomous agents that can browse the web, scrape data, draft emails, and execute complex sequences, with your team kept in the loop."
     },
     {
       icon: <Database className="w-8 h-8" />,
@@ -34,7 +34,7 @@ export const Services: React.FC = () => {
             <span className="italic text-nukode-muted">AI Automation Agency</span>
           </h2>
           <p className="text-nukode-muted max-w-2xl text-lg font-light">
-            Specializing in transforming how businesses operate through smart, scalable, and efficient solutions. Our mission is simple: eliminate repetitive tasks.
+            Specialising in transforming how businesses operate through smart, scalable, and efficient solutions. Our mission is simple: eliminate repetitive tasks.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export const Services: React.FC = () => {
                 {service.icon}
               </div>
               <h3 className="text-xl font-medium text-white mb-4">{service.title}</h3>
-              <p className="text-nukode-muted text-sm leading-relaxed">{service.description}</p>
+              <p className="text-nukode-muted leading-relaxed">{service.description}</p>
             </div>
           ))}
         </div>

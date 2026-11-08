@@ -26,12 +26,20 @@ export const AiConsultant: React.FC = () => {
               Discover exactly where AI can transform your business. Our comprehensive audit identifies automation opportunities, estimates ROI, and creates a custom implementation roadmap tailored to your unique challenges.
             </p>
 
-            <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-              <h4 className="text-white font-medium mb-2">Why Nukode?</h4>
-              <p className="text-sm text-nukode-muted">
-                Most agencies just "add AI" to everything. We build targeted agents that reduce overhead costs by 40-60% within the first quarter.
-              </p>
-            </div>
+            <span className="text-xs font-semibold tracking-widest uppercase text-nukode-muted block mb-6">How the audit works</span>
+            <ol className="space-y-6 border-l border-white/10 pl-6">
+              {[
+                { n: '01', title: 'Answer a few questions', text: 'About your team, the tools you use and the tasks that take up the most time.' },
+                { n: '02', title: 'Get your audit report', text: 'Your top automation opportunities and estimated savings, sent to your inbox.' },
+                { n: '03', title: 'Talk it through', text: 'Book a free call to go through the findings. No obligation.' },
+              ].map((step) => (
+                <li key={step.n}>
+                  <span className="text-sm font-serif italic text-nukode-muted">{step.n}</span>
+                  <h4 className="text-white font-medium mt-1 mb-1">{step.title}</h4>
+                  <p className="text-sm text-nukode-muted leading-relaxed">{step.text}</p>
+                </li>
+              ))}
+            </ol>
           </div>
 
           {/* Right Column: CTA Card */}
@@ -46,7 +54,7 @@ export const AiConsultant: React.FC = () => {
               </h3>
 
               <p className="text-nukode-muted leading-relaxed">
-                Answer a few quick questions about your business, and we'll generate a personalized AI automation audit showing you exactly how to save time and reduce costs.
+                Answer a few quick questions about your business, and we'll generate a personalised AI automation audit showing you exactly how to save time and reduce costs.
               </p>
 
               <div className="space-y-4 pt-4">
@@ -78,7 +86,7 @@ export const AiConsultant: React.FC = () => {
               </Button>
 
               <p className="text-xs text-nukode-muted">
-                Takes less than 2 minutes • No credit card required
+                Takes 5–10 minutes • No credit card required
               </p>
             </div>
           </div>

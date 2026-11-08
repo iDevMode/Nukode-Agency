@@ -43,7 +43,7 @@ export const Pricing: React.FC = () => {
           <h2 className="text-4xl md:text-5xl font-serif text-white mb-4">
             Every Business is <span className="italic">Unique</span>
           </h2>
-          <p className="text-nukode-muted max-w-2xl mx-auto">
+          <p className="text-nukode-muted max-w-2xl mx-auto text-lg font-light">
             That's why we don't do one-size-fits-all pricing. Let's discuss your specific needs and create a solution that delivers real ROI.
           </p>
         </div>
@@ -55,7 +55,7 @@ export const Pricing: React.FC = () => {
               className={`relative p-8 rounded-2xl border transition-all duration-300 flex flex-col ${
                 benefit.popular
                   ? 'bg-white/5 border-white/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]'
-                  : 'bg-nukode-card border-white/5 hover:border-white/10'
+                  : 'bg-nukode-card border-white/30'
               }`}
             >
               {benefit.popular && (
@@ -93,7 +93,7 @@ export const Pricing: React.FC = () => {
         </div>
 
         <p className="text-center text-xs text-nukode-muted mt-8">
-          No commitment required • Response within 24 hours
+          No commitment required • Pick a time that suits you
         </p>
       </div>
     </section>

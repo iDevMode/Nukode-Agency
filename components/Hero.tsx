@@ -27,7 +27,7 @@ export const Hero: React.FC = () => {
 
           <div className="flex flex-wrap gap-5 justify-center mt-4">
             <Button onClick={() => document.getElementById('consultant')?.scrollIntoView({ behavior: 'smooth' })}>
-              Calculate Your ROI
+              Get Your ROI Audit
             </Button>
             <Button variant="outline" showArrow={false} onClick={() => document.getElementById('process')?.scrollIntoView({ behavior: 'smooth' })}>
               How It Works
@@ -65,14 +65,15 @@ export const Hero: React.FC = () => {
               </div>
 
             </div>
+
+            <div className="mt-14 justify-center animate-bounce opacity-50 hidden md:flex">
+              <ArrowDown className="w-6 h-6 text-white" />
+            </div>
           </div>
         </div>
 
       </div>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50 hidden md:block">
-        <ArrowDown className="w-6 h-6 text-white" />
-      </div>
     </section>
   );
 };
